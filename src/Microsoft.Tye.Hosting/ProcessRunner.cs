@@ -78,8 +78,14 @@ namespace Microsoft.Tye.Hosting
                     path = function.FuncExecutablePath!;
                     workingDirectory = new DirectoryInfo(function.FunctionPath).FullName;
                     // todo make sure to exclude functions app from implied tye running.
+                    service.Status.ProjectFilePath = function.ProjectFile?.FullName;
 
-                    args = function.Args ?? $"start --build";
+                    args = function.Args ?? $"start";
+                    if (function.ProjectFile != null)
+                    {
+                        // Will be included in build below
+                        args = " --no-build";
+                    }
                 }
                 else
                 {
@@ -99,8 +105,10 @@ namespace Microsoft.Tye.Hosting
 
                 // TODO instead of always building with projects, try building with sln if available.
                 if (service.Status.ProjectFilePath != null &&
-                    service.Description.RunInfo is ProjectRunInfo project2 &&
-                    project2.Build &&
+                    (service.Description.RunInfo is ProjectRunInfo project2 &&
+                    project2.Build ||
+                    service.Description.RunInfo is AzureFunctionRunInfo functionInfo &&
+                    functionInfo.ProjectFile != null) &&
                     _options.BuildProjects)
                 {
                     if (!projectGroups.TryGetValue(buildProperties, out var projectGroup))
@@ -385,11 +393,11 @@ namespace Microsoft.Tye.Hosting
                             await new DotNetWatcher(_logger)
                                 .WatchAsync(processInfo, fileSetFactory, replica, status.StoppingTokenSource.Token);
                         }
-                        else if (_options.Watch && (service.Description.RunInfo is AzureFunctionRunInfo azureFunctionRunInfo) && !string.IsNullOrEmpty(azureFunctionRunInfo.ProjectFile))
+                        else if (_options.Watch && (service.Description.RunInfo is AzureFunctionRunInfo azureFunctionRunInfo) && azureFunctionRunInfo.ProjectFile != null)
                         {
                             var projectFile = azureFunctionRunInfo.ProjectFile;
                             var fileSetFactory = new MsBuildFileSetFactory(_logger,
-                                projectFile,
+                                projectFile.FullName,
                                 waitOnError: true,
                                 trace: false);
                             environment["DOTNET_WATCH"] = "1";

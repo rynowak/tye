@@ -241,7 +241,7 @@ namespace Microsoft.Tye
                             var fileInfo = new FileInfo(proj);
                             if (fileInfo.Extension == ".csproj" || fileInfo.Extension == ".fsproj")
                             {
-                                functionBuilder.ProjectFile = fileInfo.FullName;
+                                functionBuilder.ProjectFile = fileInfo;
                                 break;
                             }
                         }

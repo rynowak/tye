@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.IO;
 using Microsoft.Extensions.Logging;
 
 namespace Microsoft.Tye.Hosting.Model
@@ -19,6 +20,6 @@ namespace Microsoft.Tye.Hosting.Model
         public string? Args { get; }
         public string FunctionPath { get; }
         public string? FuncExecutablePath { get; set; }
-        public string? ProjectFile { get; set; }
+        public FileInfo? ProjectFile { get; set; }
     }
 }

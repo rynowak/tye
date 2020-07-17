@@ -4,5 +4,6 @@ name: frontend-backend
 services:
 - name: backend
   azureFunction: backend/
+  replicas: 2
 - name: frontend
   project: frontend/frontend.csproj
