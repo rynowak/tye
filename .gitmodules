@@ -1,0 +1,4 @@
+[submodule "bicep"]
+	path = submodules/bicep
+	url = git@github.com:rynowak/bicep.git
+	branch = rynowak/oam-compiler
