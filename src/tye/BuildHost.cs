@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.CommandLine;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.Tye.Bicep;
 
 namespace Microsoft.Tye
 {
@@ -13,7 +14,7 @@ namespace Microsoft.Tye
     {
         public static async Task BuildAsync(OutputContext output, FileInfo path, bool interactive, string? framework = null, ApplicationFactoryFilter? filter = null)
         {
-            var application = await ApplicationFactory.CreateAsync(output, path, framework, filter);
+            var application = await BicepApplicationFactory.CreateAsync(output, path, framework, filter);
             if (application.Services.Count == 0)
             {
                 throw new CommandException($"No services found in \"{application.Source.Name}\"");

@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using k8s;
 using k8s.Models;
 using Microsoft.Rest;
+using Microsoft.Tye.Bicep;
 using Microsoft.Tye.ConfigModel;
 
 namespace Microsoft.Tye
@@ -21,7 +22,7 @@ namespace Microsoft.Tye
         {
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
-            var application = await ApplicationFactory.CreateAsync(output, path, null, filter);
+            var application = await BicepApplicationFactory.CreateAsync(output, path, null, filter);
 
             if (!string.IsNullOrEmpty(@namespace))
             {

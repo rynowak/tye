@@ -8,6 +8,7 @@ using System.CommandLine;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Tye.Bicep;
 
 namespace Microsoft.Tye
 {
@@ -15,7 +16,7 @@ namespace Microsoft.Tye
     {
         public static async Task GenerateAsync(OutputContext output, FileInfo path, bool interactive, string ns, string? framework = null, ApplicationFactoryFilter? filter = null)
         {
-            var application = await ApplicationFactory.CreateAsync(output, path, framework, filter);
+            var application = await BicepApplicationFactory.CreateAsync(output, path, framework, filter);
 
             if (application.Services.Count == 0)
             {

@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Tye.Bicep;
 using Microsoft.Tye.ConfigModel;
 
 namespace Microsoft.Tye
@@ -42,7 +43,7 @@ namespace Microsoft.Tye
 
                 var filter = ApplicationFactoryFilter.GetApplicationFactoryFilter(args.Tags);
 
-                var application = await ApplicationFactory.CreateAsync(output, args.Path, args.Framework, filter);
+                var application = await BicepApplicationFactory.CreateAsync(output, args.Path, args.Framework, filter);
                 if (application.Services.Count == 0)
                 {
                     throw new CommandException($"No services found in \"{application.Source.Name}\"");
