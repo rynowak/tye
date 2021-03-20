@@ -49,6 +49,7 @@ namespace Frontend
 
             app.UseEndpoints(endpoints =>
             {
+                // Reads: SERVICE__BACKEND__HOST and SERVICE__BACKEND__PORT
                 var uri = Configuration.GetServiceUri("backend")!;
 
                 logger.LogInformation("Backend URL: {BackendUrl}", uri);

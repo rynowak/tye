@@ -517,6 +517,11 @@ namespace Microsoft.Tye
             output.WriteDebugLine("Restoring and evaluating projects");
 
             var projectEvaluationTargets = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, "ProjectEvaluation.targets");
+            if (!File.Exists(projectEvaluationTargets))
+            {
+                throw new CommandException($"ProjectEvaluation.targets is missing at '{projectEvaluationTargets}'");
+            }
+
             var msbuildEvaluationResult = await ProcessUtil.RunAsync(
                 "dotnet",
                 $"build " +

@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.Tye.Core\Microsoft.Tye.Core.csproj" />
+    <ProjectReference Include="..\Microsoft.Tye.Extensions\Microsoft.Tye.Extensions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\tye\ProjectEvaluation.targets" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

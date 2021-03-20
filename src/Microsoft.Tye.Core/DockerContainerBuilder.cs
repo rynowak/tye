@@ -6,6 +6,7 @@ using System;
 using System.CommandLine.Invocation;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Microsoft.Tye
@@ -56,8 +57,35 @@ namespace Microsoft.Tye
                 throw new CommandException("'docker build' failed.");
             }
 
+            output.WriteDebugLine("Running 'docker images' to get digest.");
+            output.WriteCommandLine("docker", $"images --no-trunc --quiet {container.ImageName}:{container.ImageTag}");
+            capture = output.Capture();
+
+            var builder = new StringBuilder();
+            exitCode = await Process.ExecuteAsync(
+                $"docker",
+                $"images --no-trunc --quiet {container.ImageName}:{container.ImageTag}",
+                new FileInfo(containerService.DockerFile).DirectoryName,
+                stdOut: text => builder.Append(text),
+                stdErr: capture.StdErr);
+
+            output.WriteDebugLine($"Done running 'docker images' exit code: {exitCode}");
+            if (exitCode != 0)
+            {
+                throw new CommandException("'docker images' failed.");
+            }
+
+            var text = builder.ToString();
+            var index = text.IndexOf("sha256:");
+            if (index == -1)
+            {
+                throw new CommandException("Could not parse digest output: " + text);
+            }
+
+            var digest = text.Substring(index + "sha256:".Length).Trim();
+
             output.WriteInfoLine($"Created Docker Image: '{container.ImageName}:{container.ImageTag}'");
-            containerService.Outputs.Add(new DockerImageOutput(container.ImageName!, container.ImageTag!));
+            containerService.Outputs.Add(new DockerImageOutput(container.ImageName!, container.ImageTag!, digest));
         }
 
         public static async Task BuildContainerImageAsync(OutputContext output, ApplicationBuilder application, DotnetProjectServiceBuilder project, ContainerInfo container)
@@ -161,8 +189,35 @@ namespace Microsoft.Tye
                     throw new CommandException("'docker build' failed.");
                 }
 
-                output.WriteInfoLine($"Created Docker Image: '{container.ImageName}:{container.ImageTag}'");
-                project.Outputs.Add(new DockerImageOutput(container.ImageName!, container.ImageTag!));
+                output.WriteDebugLine("Running 'docker images' to get digest.");
+                output.WriteCommandLine("docker", $"images --no-trunc --quiet {container.ImageName}:{container.ImageTag}");
+                capture = output.Capture();
+
+                var builder = new StringBuilder();
+                exitCode = await Process.ExecuteAsync(
+                    $"docker",
+                    $"images --no-trunc --quiet {container.ImageName}:{container.ImageTag}",
+                    project.ProjectFile.DirectoryName,
+                    stdOut: text => builder.Append(text),
+                    stdErr: capture.StdErr);
+
+                output.WriteDebugLine($"Done running 'docker images' exit code: {exitCode}");
+                if (exitCode != 0)
+                {
+                    throw new CommandException("'docker images' failed.");
+                }
+
+                var text = builder.ToString();
+                var index = text.IndexOf("sha256:");
+                if (index == -1)
+                {
+                    throw new CommandException("Could not parse digest output: " + text);
+                }
+
+                var digest = text.Substring(index + "sha256:".Length).Trim();
+
+                output.WriteInfoLine($"Created Docker Image: '{container.ImageName}:{container.ImageTag}@sha256:{digest}'");
+                project.Outputs.Add(new DockerImageOutput(container.ImageName!, container.ImageTag!, digest));
             }
             finally
             {

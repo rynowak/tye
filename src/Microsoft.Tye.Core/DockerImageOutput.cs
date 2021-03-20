@@ -8,7 +8,7 @@ namespace Microsoft.Tye
 {
     public class DockerImageOutput : ServiceOutput
     {
-        public DockerImageOutput(string imageName, string imageTag)
+        public DockerImageOutput(string imageName, string imageTag, string imageDigest)
         {
             if (imageName is null)
             {
@@ -20,12 +20,20 @@ namespace Microsoft.Tye
                 throw new ArgumentNullException(nameof(imageTag));
             }
 
+            if (imageDigest is null)
+            {
+                throw new ArgumentNullException(nameof(imageDigest));
+            }
+
             ImageName = imageName;
             ImageTag = imageTag;
+            ImageDigest = imageDigest;
         }
 
         public string ImageName { get; }
 
         public string ImageTag { get; }
+
+        public string ImageDigest { get; }
     }
 }
