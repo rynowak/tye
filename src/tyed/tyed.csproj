@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>Microsoft.Tye</RootNamespace>
+    <Nullable>enable</Nullable>
+
+    <!-- we embed the static files in wwwroot and serve them from the assembly -->
+    <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="wwwroot\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="3.1.0" />
+    <PackageReference Include="System.Reactive" Version="4.3.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.Tye.Core\Microsoft.Tye.Core.csproj" />
+    <ProjectReference Include="..\OpenArm.Kit\OpenArm.Kit.csproj" />
+  </ItemGroup>
+
+</Project>

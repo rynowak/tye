@@ -1,0 +1,5 @@
+{
+  "properties": {
+    "image": "rynowak/backend:0.7.0-dev"
+  }
+}

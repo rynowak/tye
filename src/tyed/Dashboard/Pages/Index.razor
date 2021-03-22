@@ -1,0 +1,67 @@
+﻿@page "/"
+@inject RuntimeEventSink EventSink
+@implements IDisposable
+
+<h1>Services</h1>
+<table class="table service-table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Source</th>
+            <th>Bindings</th>
+            <th>Replicas</th>
+            <th>Restarts</th>
+            <th>Logs</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var container in this.model.Containers)
+        {
+            var logsPath = $"logs/{container.Name}";
+            var servicePath = $"services/{container.Name}";
+            <tr @key="container.Name">
+                <td>
+                    <a href="@servicePath">@container.Name</a>
+                </td>
+                <td>
+                    Container
+                </td>
+                <td class="source-project">
+                    <p>@container.Resource.Properties.Image</p>
+                </td>
+                <td>
+                    <p>none</p>
+                </td>
+                <td>1 / 1</td>
+                <td>0</td>
+                <td><NavLink href="@logsPath">View Logs</NavLink></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+
+    private RuntimeModel model = default!;
+
+    protected override void OnInitialized()
+    {
+        this.model = this.EventSink.Current;
+        this.EventSink.Changed += OnRuntimeChanged;
+    }
+
+    void IDisposable.Dispose()
+    {
+        this.EventSink.Changed -= OnRuntimeChanged;
+    }
+
+    private void OnRuntimeChanged(object? sender, RuntimeModel model)
+    {
+        InvokeAsync(() => 
+        {
+            this.model = model;
+            StateHasChanged();
+        });
+    }
+}
